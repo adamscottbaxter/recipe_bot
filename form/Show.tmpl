@@ -1,0 +1,13 @@
+{{ define "Show" }}
+  {{ template "Header" }}
+    {{ template "Menu"  }}
+    <h2> Register {{ .id }} </h2>
+      <p>Name: {{ .name }}</p>
+      <p>PairOne:  {{ .pairOne }}</p>
+      <p>PairTwo:  {{ .pairTwo }}</p>
+      <p>GainRatio:  {{ .gainRatio }}</p>
+      <p>LossRatio:  {{ .lossRatio }}</p>
+      <p>Amount:  {{ .amount }}</p>
+      <p>Frequency:  {{ .frequency }}</p><br /> <a href="/edit?id={{ .id }}">Edit</a></p>
+  {{ template "Footer" }}
+{{ end }}

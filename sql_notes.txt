@@ -1,0 +1,10 @@
+CREATE TABLE IF NOT EXISTS recipes (
+    Id INT AUTO_INCREMENT PRIMARY KEY,
+    Name VARCHAR(255) NOT NULL,
+    PairOne VARCHAR(8),
+    PairTwo VARCHAR(8),
+    GainRatio DECIMAL(12,8),
+    LossRatio DECIMAL(12,8),
+    Amount DECIMAL(12,8),
+    Frequency INT
+)  ENGINE=INNODB;
