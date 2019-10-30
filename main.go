@@ -29,8 +29,9 @@ func (r Recipe) CreateOrders() string {
 	currentPrice := GetPrice("BNBBTC")
 	highPrice := MultiplyPrice(currentPrice, r.GainRatio)
 	lowPrice := MultiplyPrice(currentPrice, r.LossRatio)
+	stopPrice := MultiplyPrice(lowPrice, 0.99)
 	CreateOrder(highPrice)
-	CreateOrder(lowPrice)
+	CreateStopLossLimitOrder(lowPrice, stopPrice)
 	return "ok"
 }
 
@@ -81,6 +82,18 @@ func CreateOrder(sellPrice string) *binance.CreateOrderResponse {
 		Side(binance.SideTypeSell).Type(binance.OrderTypeLimit).
 		TimeInForce(binance.TimeInForceTypeGTC).Quantity("0.05").
 		Price(sellPrice).Do(context.Background())
+	if err != nil {
+		panic(err)
+	}
+	fmt.Printf("ORDER: \n %+v\n", order)
+	return order
+}
+
+func CreateStopLossLimitOrder(sellPrice string, stopPrice string) *binance.CreateOrderResponse {
+	order, err := CreateClient().NewCreateOrderService().Symbol("BNBBTC").
+		Side(binance.SideTypeSell).Type(binance.OrderTypeStopLossLimit).
+		TimeInForce(binance.TimeInForceTypeGTC).Quantity("0.05").
+		Price(sellPrice).StopPrice(stopPrice).Do(context.Background())
 	if err != nil {
 		panic(err)
 	}
@@ -266,7 +279,7 @@ func main() {
 	GetPrice("BNBBTC")
 
 	db := dbConn()
-	selDB, err := db.Query("SELECT * FROM recipes ORDER BY id ASC LIMIT 1")
+	selDB, err := db.Query("SELECT * FROM recipes ORDER BY id DESC LIMIT 1")
 	if err != nil {
 		panic(err.Error())
 	}
