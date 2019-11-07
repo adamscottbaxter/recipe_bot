@@ -1,10 +1,29 @@
 CREATE TABLE IF NOT EXISTS recipes (
-    Id INT AUTO_INCREMENT PRIMARY KEY,
-    Name VARCHAR(255) NOT NULL,
-    PairOne VARCHAR(8),
-    PairTwo VARCHAR(8),
-    GainRatio DECIMAL(12,8),
-    LossRatio DECIMAL(12,8),
-    Amount DECIMAL(12,8),
-    Frequency INT
-)  ENGINE=INNODB;
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    symbol VARCHAR(8),
+    side VARCHAR(8),
+    gain_ratio DECIMAL(12,8),
+    loss_ratio DECIMAL(12,8),
+    amount DECIMAL(12,8),
+    frequency INT
+);
+
+CREATE TABLE IF NOT EXISTS dishes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    recipe_id INT,
+    symbol VARCHAR(8),
+    side VARCHAR(8),
+    current_price DECIMAL(12,8),
+    tastey BOOLEAN DEFAULT FALSE
+);
+
+CREATE TABLE IF NOT EXISTS orders (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    dish_id INT,
+    binance_order_id INT,
+    binance_status VARCHAR(8),
+    original_quantity DECIMAL(12,8),
+    price DECIMAL(12,8),
+    net_change DECIMAL(12,8)
+) ENGINE=INNODB;

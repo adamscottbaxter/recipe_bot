@@ -1,15 +1,15 @@
-{{ define "New" }}
+{{ define "Edit" }}
   {{ template "Header" }}
     {{ template "Menu" }}
    <h2>Edit Recipe</h2>
    <form method="POST" action="insert">
-     <label> Name </label><input type="text" name="Name" /><br />
-     <label> Pair One </label><input type="text" name="PairOne" /><br />
-     <label> Pair Two </label><input type="text" name="PairTwo" /><br />
-     <label> Gain Ratio </label><input type="text" name="GainRatio" /><br />
-     <label> Loss Ratio </label><input type="text" name="LossRatio" /><br />
-     <label> Amount </label><input type="text" name="Amount" /><br />
-     <label> Frequency </label><input type="text" name="Frequency" /><br />
+     <label>Name</label><input type="text" name="Name" /><br />
+     <label>Symbol</label><input type="text" name="Symbol" /><br />
+     <label>Side</label><input type="text" name="Side" /><br />
+     <label>Gain Ratio</label><input type="text" name="GainRatio" /><br />
+     <label>Loss Ratio</label><input type="text" name="LossRatio" /><br />
+     <label>Amount</label><input type="text" name="Amount" /><br />
+     <label>Frequency</label><input type="text" name="Frequency" /><br />
      <input type="submit" value="Save Recipe" />
    </form>
   {{ template "Footer" }}
