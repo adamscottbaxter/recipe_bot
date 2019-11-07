@@ -39,10 +39,10 @@ func MultiplyPrice(price string, factor float64) string {
 	return strconv.FormatFloat(floatPrice, 'f', 7, 64)
 }
 
-func CreateOrder(sellPrice string) *binance.CreateOrderResponse {
-	order, err := CreateClient().NewCreateOrderService().Symbol("BNBBTC").
+func CreateOrder(symbol string, quantity string, sellPrice string) *binance.CreateOrderResponse {
+	order, err := CreateClient().NewCreateOrderService().Symbol(symbol).
 		Side(binance.SideTypeSell).Type(binance.OrderTypeLimit).
-		TimeInForce(binance.TimeInForceTypeGTC).Quantity("0.05").
+		TimeInForce(binance.TimeInForceTypeGTC).Quantity(quantity).
 		Price(sellPrice).Do(context.Background())
 	if err != nil {
 		panic(err)
@@ -51,10 +51,10 @@ func CreateOrder(sellPrice string) *binance.CreateOrderResponse {
 	return order
 }
 
-func CreateStopLossLimitOrder(sellPrice string, stopPrice string) *binance.CreateOrderResponse {
-	order, err := CreateClient().NewCreateOrderService().Symbol("BNBBTC").
+func CreateStopLossLimitOrder(symbol string, quantity string, sellPrice string, stopPrice string) *binance.CreateOrderResponse {
+	order, err := CreateClient().NewCreateOrderService().Symbol(symbol).
 		Side(binance.SideTypeSell).Type(binance.OrderTypeStopLossLimit).
-		TimeInForce(binance.TimeInForceTypeGTC).Quantity("0.05").
+		TimeInForce(binance.TimeInForceTypeGTC).Quantity().
 		Price(sellPrice).StopPrice(stopPrice).Do(context.Background())
 	if err != nil {
 		panic(err)
@@ -74,8 +74,8 @@ func CancelOrder(symbol string, orderID int64) *binance.CancelOrderResponse {
 }
 
 func CheckOrder(symbol string, orderID int64) *binance.Order {
-	order, err := CreateClient().NewGetOrderService().Symbol("BNBBTC").
-		OrderID(280918086).Do(context.Background())
+	order, err := CreateClient().NewGetOrderService().Symbol(symbol).
+		OrderID(orderID).Do(context.Background())
 	if err != nil {
 		panic(err)
 	}
