@@ -2,14 +2,15 @@
   {{ template "Header" }}
     {{ template "Menu" }}
    <h2>Edit Recipe</h2>
-   <form method="POST" action="insert">
-     <label>Name</label><input type="text" name="Name" /><br />
-     <label>Symbol</label><input type="text" name="Symbol" /><br />
-     <label>Side</label><input type="text" name="Side" /><br />
-     <label>Gain Ratio</label><input type="text" name="GainRatio" /><br />
-     <label>Loss Ratio</label><input type="text" name="LossRatio" /><br />
-     <label>Quantity</label><input type="text" name="Quantity" /><br />
-     <label>Frequency</label><input type="text" name="Frequency" /><br />
+   <form method="POST" action="update">
+     <input type="hidden" name="uid" value="{{ .ID }}">
+     <label>Name</label><input type="text" name="Name" value="{{ .Name }}"/><br />
+     <label>Symbol</label><input type="text" name="Symbol"  value="{{ .Symbol }}"/><br />
+     <label>Side</label><input type="text" name="Side" value="{{ .Side }}"/><br />
+     <label>Gain Ratio</label><input type="text" name="GainRatio" value="{{ .GainRatio }}"/><br />
+     <label>Loss Ratio</label><input type="text" name="LossRatio" value="{{ .LossRatio }}"/><br />
+     <label>Quantity</label><input type="text" name="Quantity" value="{{ .Quantity }}"/><br />
+     <label>Frequency</label><input type="text" name="Frequency" value="{{ .Frequency }}"/><br />
      <input type="submit" value="Save Recipe" />
    </form>
   {{ template "Footer" }}

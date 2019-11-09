@@ -129,20 +129,20 @@ func Insert(w http.ResponseWriter, r *http.Request) {
 func Update(w http.ResponseWriter, r *http.Request) {
 	db := dbConn()
 	if r.Method == "POST" {
-		name := r.FormValue("name")
-		PairOne := r.FormValue("PairOne")
-		PairTwo := r.FormValue("PairTwo")
-		GainRatio := r.FormValue("GainRatio")
-		LossRatio := r.FormValue("LossRatio")
-		Quantity := r.FormValue("Quantity")
-		Frequency := r.FormValue("Frequency")
+		name := r.FormValue("Name")
+		symbol := r.FormValue("Symbol")
+		side := r.FormValue("Side")
+		gainRatio := r.FormValue("GainRatio")
+		lossRatio := r.FormValue("LossRatio")
+		quantity := r.FormValue("Quantity")
+		frequency := r.FormValue("Frequency")
 		id := r.FormValue("uid")
-		insForm, err := db.Prepare("UPDATE recipes SET name=?, PairOne=?, PairTwo=?, GainRatio=?, LossRatio=?, Quantity=? WHERE id=?")
+		insForm, err := db.Prepare("UPDATE recipes SET name=?, symbol=?, side=?, gain_ratio=?, loss_ratio=?, quantity=?, frequency=? WHERE id=?")
 		if err != nil {
 			panic(err.Error())
 		}
-		insForm.Exec(name, PairOne, PairTwo, GainRatio, LossRatio, Quantity, Frequency, id)
-		log.Println("UPDATE: name: " + name + " | PairOne: " + PairOne + " | PairTwo: " + PairTwo)
+		insForm.Exec(name, symbol, side, gainRatio, lossRatio, quantity, frequency, id)
+		log.Println("UPDATE: name: " + name + " | Symbol: " + symbol + " | Side: " + side)
 	}
 	defer db.Close()
 	http.Redirect(w, r, "/", 301)
