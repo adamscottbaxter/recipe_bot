@@ -1,6 +1,12 @@
 package main
 
-import "strconv"
+import (
+	"fmt"
+	"log"
+	"strconv"
+
+	binance "github.com/adshao/go-binance"
+)
 
 type Recipe struct {
 	ID        int
@@ -13,15 +19,38 @@ type Recipe struct {
 	Frequency int
 }
 
-func (r Recipe) CreateOrders() string {
+func (r Recipe) CookDish() string {
+	currentPrice := GetPrice(r.Symbol)
+
+	db := dbConn()
+
+	insert, err := db.Prepare("INSERT INTO dishes(recipe_id, symbol, side, current_price) VALUES(?,?,?,?)")
+	if err != nil {
+		panic(err.Error())
+	}
+	insert.Exec(r.ID, r.Symbol, r.Side, currentPrice)
+	log.Printf("INSERT DISH: id: %v | Symbol: %v | Side: %v | Current Price: %v", r.ID, r.Symbol, r.Side, currentPrice)
+
+	defer db.Close()
+
+	return "Dish Cooked"
+}
+
+func (r Recipe) CreateOrders() [2]*binance.CreateOrderResponse {
 	currentPrice := GetPrice(r.Symbol)
 
 	highPrice := MultiplyPrice(currentPrice, r.GainRatio)
 	lowPrice := MultiplyPrice(currentPrice, r.LossRatio)
 	stopPrice := MultiplyPrice(lowPrice, 0.99)
-	CreateOrder(r.Symbol, r.StringQty(), highPrice)
-	CreateStopLossLimitOrder(r.Symbol, r.StringQty(), lowPrice, stopPrice)
-	return "ok"
+	highOrder := CreateOrder(r.Symbol, r.StringQty(), highPrice)
+	lowOrder := CreateStopLossLimitOrder(r.Symbol, r.StringQty(), lowPrice, stopPrice)
+
+	var orders [2]*binance.CreateOrderResponse
+	orders[0] = highOrder
+	orders[1] = lowOrder
+
+	fmt.Println("Orders: %v", orders)
+	return orders
 }
 
 func (r Recipe) StringQty() string {
