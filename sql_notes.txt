@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS recipes (
     side VARCHAR(8),
     gain_ratio DECIMAL(12,8),
     loss_ratio DECIMAL(12,8),
-    amount DECIMAL(12,8),
+    quantity DECIMAL(12,8),
     frequency INT
 );
 
@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS dishes (
     symbol VARCHAR(8),
     side VARCHAR(8),
     current_price DECIMAL(12,8),
-    tastey BOOLEAN DEFAULT FALSE
+    tasty BOOLEAN DEFAULT FALSE
 );
 
 CREATE TABLE IF NOT EXISTS orders (

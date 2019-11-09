@@ -54,7 +54,7 @@ func CreateOrder(symbol string, quantity string, sellPrice string) *binance.Crea
 func CreateStopLossLimitOrder(symbol string, quantity string, sellPrice string, stopPrice string) *binance.CreateOrderResponse {
 	order, err := CreateClient().NewCreateOrderService().Symbol(symbol).
 		Side(binance.SideTypeSell).Type(binance.OrderTypeStopLossLimit).
-		TimeInForce(binance.TimeInForceTypeGTC).Quantity().
+		TimeInForce(binance.TimeInForceTypeGTC).Quantity(quantity).
 		Price(sellPrice).StopPrice(stopPrice).Do(context.Background())
 	if err != nil {
 		panic(err)
