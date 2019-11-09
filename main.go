@@ -6,14 +6,6 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-type Dish struct {
-	ID           int
-	RecipeID     int
-	PairOne      string
-	PairTwo      string
-	CurrentPrice float64
-}
-
 func dbConn() (db *sql.DB) {
 	dbDriver := "mysql"
 	dbUser := "trade"
