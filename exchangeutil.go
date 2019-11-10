@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"log"
 	"os"
 	"strconv"
 
@@ -39,7 +40,7 @@ func MultiplyPrice(price string, factor float64) string {
 	return strconv.FormatFloat(floatPrice, 'f', 7, 64)
 }
 
-func CreateOrder(symbol string, quantity string, sellPrice string) *binance.CreateOrderResponse {
+func CreateOrder(dishID int64, symbol string, quantity string, sellPrice string) *binance.CreateOrderResponse {
 	order, err := CreateClient().NewCreateOrderService().Symbol(symbol).
 		Side(binance.SideTypeSell).Type(binance.OrderTypeLimit).
 		TimeInForce(binance.TimeInForceTypeGTC).Quantity(quantity).
@@ -48,10 +49,23 @@ func CreateOrder(symbol string, quantity string, sellPrice string) *binance.Crea
 		panic(err)
 	}
 	fmt.Printf("ORDER: \n %+v\n", order)
+	db := dbConn()
+	stmt, err := db.Prepare("INSERT INTO orders(dish_id, symbol, binance_order_id, binance_status, original_quantity, price) VALUES(?,?,?,?,?,?)")
+	if err != nil {
+		log.Fatal("Cannot prepare DB statement", err)
+	}
+	fmt.Print("Created Limit Order")
+
+	// &{Symbol:BNBBTC OrderID:289673452 ClientOrderID:ywzi6PNQtfbeS5LeMFMUw2 TransactTime:1573336057195 Price:0.00225170 OrigQuantity:0.10000000 ExecutedQuantity:0.00000000 CummulativeQuoteQuantity:0.00000000 Status:NEW TimeInForce:GTC Type:LIMIT Side:SELL Fills:[]}
+	stmt.Exec(dishID, order.Symbol, order.OrderID, order.Status, order.OrigQuantity, order.Price)
+	if err != nil {
+		log.Fatal("Cannot run insert statement", err)
+	}
+	defer db.Close()
 	return order
 }
 
-func CreateStopLossLimitOrder(symbol string, quantity string, sellPrice string, stopPrice string) *binance.CreateOrderResponse {
+func CreateStopLossLimitOrder(dishID int64, symbol string, quantity string, sellPrice string, stopPrice string) *binance.CreateOrderResponse {
 	order, err := CreateClient().NewCreateOrderService().Symbol(symbol).
 		Side(binance.SideTypeSell).Type(binance.OrderTypeStopLossLimit).
 		TimeInForce(binance.TimeInForceTypeGTC).Quantity(quantity).
@@ -59,6 +73,18 @@ func CreateStopLossLimitOrder(symbol string, quantity string, sellPrice string, 
 	if err != nil {
 		panic(err)
 	}
+	db := dbConn()
+	stmt, err := db.Prepare("INSERT INTO orders(dish_id, symbol, binance_order_id, binance_status, original_quantity, price) VALUES(?,?,?,?,?,?)")
+	if err != nil {
+		log.Fatal("Cannot prepare DB statement", err)
+	}
+	fmt.Print("Created Stop Loss Order")
+	// &{Symbol:BNBBTC OrderID:289673453 ClientOrderID:Gy7KR6i6dN08euRbRXXHoE TransactTime:1573336057397 Price: OrigQuantity: ExecutedQuantity: CummulativeQuoteQuantity: Status: TimeInForce: Type: Side: Fills:[]}
+	stmt.Exec(dishID, order.Symbol, order.OrderID, order.Status, order.OrigQuantity, order.Price)
+	if err != nil {
+		log.Fatal("Cannot run insert statement", err)
+	}
+	defer db.Close()
 	fmt.Printf("ORDER: \n %+v\n", order)
 	return order
 }
