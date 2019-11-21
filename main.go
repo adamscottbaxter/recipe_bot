@@ -22,7 +22,7 @@ func main() {
 	// serveWeb()
 
 	db := dbConn()
-	nId := 7
+	nId := 8
 	selDB, err := db.Query("SELECT * FROM recipes WHERE id=?", nId)
 	if err != nil {
 		panic(err.Error())

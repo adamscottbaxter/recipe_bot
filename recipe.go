@@ -21,10 +21,15 @@ type Recipe struct {
 
 func (r Recipe) CookDish() string {
 	dishID := r.prepDish()
-	r.CreateOrders(dishID)
+	if r.Side == "SELL" {
+		r.CreateSellOrders(dishID)
+	} else {
+		r.CreateBuyOrders(dishID)
+	}
 	// &{Symbol:BNBBTC OrderID:289673452 ClientOrderID:ywzi6PNQtfbeS5LeMFMUw2 TransactTime:1573336057195 Price:0.00225170 OrigQuantity:0.10000000 ExecutedQuantity:0.00000000 CummulativeQuoteQuantity:0.00000000 Status:NEW TimeInForce:GTC Type:LIMIT Side:SELL Fills:[]}
 
 	// &{Symbol:BNBBTC OrderID:289673453 ClientOrderID:Gy7KR6i6dN08euRbRXXHoE TransactTime:1573336057397 Price: OrigQuantity: ExecutedQuantity: CummulativeQuoteQuantity: Status: TimeInForce: Type: Side: Fills:[]}
+
 	return "Dish Cooked"
 }
 
@@ -54,11 +59,11 @@ func (r Recipe) binanceSide() binance.SideType {
 	if r.Side == "SELL" {
 		return binance.SideTypeSell
 	} else {
-		return binance.SideTypeSell
+		return binance.SideTypeBuy
 	}
 }
 
-func (r Recipe) CreateOrders(dishID int64) [2]*binance.CreateOrderResponse {
+func (r Recipe) CreateSellOrders(dishID int64) [2]*binance.CreateOrderResponse {
 	currentPrice := GetPrice(r.Symbol)
 
 	highPrice := MultiplyPrice(currentPrice, r.GainRatio)
@@ -66,6 +71,23 @@ func (r Recipe) CreateOrders(dishID int64) [2]*binance.CreateOrderResponse {
 	stopPrice := MultiplyPrice(lowPrice, 0.99)
 	highOrder := CreateOrder(dishID, r.Symbol, r.binanceSide(), r.StringQty(), highPrice)
 	lowOrder := CreateStopLossLimitOrder(dishID, r.Symbol, r.binanceSide(), r.StringQty(), lowPrice, stopPrice)
+
+	var orders [2]*binance.CreateOrderResponse
+	orders[0] = highOrder
+	orders[1] = lowOrder
+
+	fmt.Println("Orders: %v", &orders)
+	return orders
+}
+
+func (r Recipe) CreateBuyOrders(dishID int64) [2]*binance.CreateOrderResponse {
+	currentPrice := GetPrice(r.Symbol)
+
+	highPrice := MultiplyPrice(currentPrice, r.GainRatio)
+	lowPrice := MultiplyPrice(currentPrice, r.LossRatio)
+	stopPrice := MultiplyPrice(highPrice, 0.999)
+	lowOrder := CreateOrder(dishID, r.Symbol, r.binanceSide(), r.StringQty(), lowPrice)
+	highOrder := CreateTakeProfitLimitOrder(dishID, r.Symbol, r.binanceSide(), r.StringQty(), highPrice, stopPrice)
 
 	var orders [2]*binance.CreateOrderResponse
 	orders[0] = highOrder

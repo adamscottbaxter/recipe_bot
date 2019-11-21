@@ -89,6 +89,30 @@ func CreateStopLossLimitOrder(dishID int64, symbol string, side binance.SideType
 	return order
 }
 
+func CreateTakeProfitLimitOrder(dishID int64, symbol string, side binance.SideType, quantity string, sellPrice string, stopPrice string) *binance.CreateOrderResponse {
+	order, err := CreateClient().NewCreateOrderService().Symbol(symbol).
+		Side(side).Type(binance.OrderTypeTakeProfitLimit).
+		TimeInForce(binance.TimeInForceTypeGTC).Quantity(quantity).
+		Price(sellPrice).StopPrice(stopPrice).Do(context.Background())
+	if err != nil {
+		panic(err)
+	}
+	db := dbConn()
+	stmt, err := db.Prepare("INSERT INTO orders(dish_id, symbol, binance_order_id, binance_status, original_quantity, price) VALUES(?,?,?,?,?,?)")
+	if err != nil {
+		log.Fatal("Cannot prepare DB statement", err)
+	}
+	fmt.Print("Created Take Profit Limit Order")
+
+	stmt.Exec(dishID, order.Symbol, order.OrderID, order.Status, order.OrigQuantity, order.Price)
+	if err != nil {
+		log.Fatal("Cannot run insert statement", err)
+	}
+	defer db.Close()
+	fmt.Printf("ORDER: \n %+v\n", order)
+	return order
+}
+
 func CancelOrder(symbol string, orderID int64) *binance.CancelOrderResponse {
 	cancelledOrder, err := CreateClient().NewCancelOrderService().Symbol(symbol).
 		OrderID(orderID).Do(context.Background())
