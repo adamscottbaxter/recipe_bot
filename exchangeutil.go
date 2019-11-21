@@ -40,9 +40,9 @@ func MultiplyPrice(price string, factor float64) string {
 	return strconv.FormatFloat(floatPrice, 'f', 7, 64)
 }
 
-func CreateOrder(dishID int64, symbol string, quantity string, sellPrice string) *binance.CreateOrderResponse {
+func CreateOrder(dishID int64, symbol string, side binance.SideType, quantity string, sellPrice string) *binance.CreateOrderResponse {
 	order, err := CreateClient().NewCreateOrderService().Symbol(symbol).
-		Side(binance.SideTypeSell).Type(binance.OrderTypeLimit).
+		Side(side).Type(binance.OrderTypeLimit).
 		TimeInForce(binance.TimeInForceTypeGTC).Quantity(quantity).
 		Price(sellPrice).Do(context.Background())
 	if err != nil {
@@ -65,9 +65,9 @@ func CreateOrder(dishID int64, symbol string, quantity string, sellPrice string)
 	return order
 }
 
-func CreateStopLossLimitOrder(dishID int64, symbol string, quantity string, sellPrice string, stopPrice string) *binance.CreateOrderResponse {
+func CreateStopLossLimitOrder(dishID int64, symbol string, side binance.SideType, quantity string, sellPrice string, stopPrice string) *binance.CreateOrderResponse {
 	order, err := CreateClient().NewCreateOrderService().Symbol(symbol).
-		Side(binance.SideTypeSell).Type(binance.OrderTypeStopLossLimit).
+		Side(side).Type(binance.OrderTypeStopLossLimit).
 		TimeInForce(binance.TimeInForceTypeGTC).Quantity(quantity).
 		Price(sellPrice).StopPrice(stopPrice).Do(context.Background())
 	if err != nil {

@@ -50,14 +50,22 @@ func (r Recipe) prepDish() int64 {
 	return dishID
 }
 
+func (r Recipe) binanceSide() binance.SideType {
+	if r.Side == "SELL" {
+		return binance.SideTypeSell
+	} else {
+		return binance.SideTypeSell
+	}
+}
+
 func (r Recipe) CreateOrders(dishID int64) [2]*binance.CreateOrderResponse {
 	currentPrice := GetPrice(r.Symbol)
 
 	highPrice := MultiplyPrice(currentPrice, r.GainRatio)
 	lowPrice := MultiplyPrice(currentPrice, r.LossRatio)
 	stopPrice := MultiplyPrice(lowPrice, 0.99)
-	highOrder := CreateOrder(dishID, r.Symbol, r.StringQty(), highPrice)
-	lowOrder := CreateStopLossLimitOrder(dishID, r.Symbol, r.StringQty(), lowPrice, stopPrice)
+	highOrder := CreateOrder(dishID, r.Symbol, r.binanceSide(), r.StringQty(), highPrice)
+	lowOrder := CreateStopLossLimitOrder(dishID, r.Symbol, r.binanceSide(), r.StringQty(), lowPrice, stopPrice)
 
 	var orders [2]*binance.CreateOrderResponse
 	orders[0] = highOrder
