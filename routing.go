@@ -161,6 +161,37 @@ func Delete(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/", 301)
 }
 
+func Cook(w http.ResponseWriter, r *http.Request) {
+	db := dbConn()
+	nId := r.URL.Query().Get("id")
+	selDB, err := db.Query("SELECT * FROM recipes WHERE id=?", nId)
+	if err != nil {
+		panic(err.Error())
+	}
+	recipe := Recipe{}
+	for selDB.Next() {
+		var id int
+		var name, symbol, side string
+		var gainRatio, lossRatio, quantity float64
+		var frequency int
+		err = selDB.Scan(&id, &name, &symbol, &side, &gainRatio, &lossRatio, &quantity, &frequency)
+		if err != nil {
+			panic(err.Error())
+		}
+		recipe.ID = id
+		recipe.Name = name
+		recipe.Symbol = symbol
+		recipe.Side = side
+		recipe.GainRatio = gainRatio
+		recipe.LossRatio = lossRatio
+		recipe.Quantity = quantity
+		recipe.Frequency = frequency
+	}
+	recipe.CookDish()
+	tmpl.ExecuteTemplate(w, "Show", recipe)
+	defer db.Close()
+}
+
 func serveWeb() {
 	http.HandleFunc("/", Index)
 	http.HandleFunc("/show", Show)
@@ -169,5 +200,6 @@ func serveWeb() {
 	http.HandleFunc("/insert", Insert)
 	http.HandleFunc("/update", Update)
 	http.HandleFunc("/delete", Delete)
+	http.HandleFunc("/cook", Cook)
 	http.ListenAndServe(":8080", nil)
 }
