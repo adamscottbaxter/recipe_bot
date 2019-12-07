@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 
 	binance "github.com/adshao/go-binance"
 )
@@ -42,19 +43,24 @@ func CheckAllOpenOrders() string {
 
 	db := dbConn()
 
-	selDB, err := db.Query("SELECT id, dish_id, symbol, binance_order_id, binance_status, original_quantity, price, coalesce(net_change, 0.0) FROM orders WHERE binance_status <> ?", "FILLED")
+	rows, err := db.Query("SELECT id, dish_id, symbol, binance_order_id, binance_status, original_quantity, price, coalesce(net_change, 0.0) FROM orders WHERE binance_status = ?", "OPEN")
 	if err != nil {
 		panic(err.Error())
 	}
+	defer db.Close()
+
 	order := Order{}
 	orders := []Order{}
-	for selDB.Next() {
-		var id, dishID, binanceOrderID int
-		var symbol, binanceStatus string
-		var originalQuantity, price, netChange float64
-		err = selDB.Scan(&id, &dishID, &symbol, &binanceOrderID, &binanceStatus, &originalQuantity, &price, &netChange)
+
+	var (
+		id, dishID, binanceOrderID         int
+		symbol, binanceStatus              string
+		originalQuantity, price, netChange float64
+	)
+	for rows.Next() {
+		err := rows.Scan(&id, &dishID, &symbol, &binanceOrderID, &binanceStatus, &originalQuantity, &price, &netChange)
 		if err != nil {
-			panic(err.Error())
+			log.Fatal(err)
 		}
 		order.ID = id
 		order.DishID = dishID
@@ -64,15 +70,13 @@ func CheckAllOpenOrders() string {
 		order.OriginalQuantity = originalQuantity
 		order.Price = price
 		order.NetChange = netChange
-	}
 
-	orders = append(orders, order)
+		orders = append(orders, order)
+	}
 
 	for _, order := range orders {
 		order.UpdateStatus()
 	}
-	// tmpl.ExecuteTemplate(w, "Show", recipe)
-	defer db.Close()
 
 	return "TBD ALL OPEN ORDERS"
 }
