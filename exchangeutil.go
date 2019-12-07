@@ -129,5 +129,6 @@ func CheckOrder(symbol string, orderID int64) *binance.Order {
 	if err != nil {
 		panic(err)
 	}
+	fmt.Printf("ORDER CHECK: \n %+v\n", order)
 	return order
 }
