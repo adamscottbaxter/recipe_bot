@@ -8,7 +8,9 @@
       <p>GainRatio:  {{ .GainRatio }}</p>
       <p>LossRatio:  {{ .LossRatio }}</p>
       <p>Quantity:  {{ .Quantity }}</p>
-      <p>Frequency:  {{ .Frequency }}</p><br /> <a href="/edit?id={{ .ID }}">Edit</a></p>
+      <p>Frequency:  {{ .Frequency }}</p><br />
+    	  <p>Active: {{ .Active }}</p>
+      <a href="/edit?id={{ .ID }}">Edit</a></p>
     	  <br/>
 		<a href="/cook?id={{ .ID }}">Cook</a>
   {{ template "Footer" }}

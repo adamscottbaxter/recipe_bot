@@ -19,8 +19,8 @@ func dbConn() (db *sql.DB) {
 }
 
 func main() {
-	// serveWeb()
-CheckAllOpenOrders()
+	serveWeb()
+	// CheckAllOpenOrders()
 	// db := dbConn()
 	// nId := 8
 	// selDB, err := db.Query("SELECT * FROM recipes WHERE id=?", nId)

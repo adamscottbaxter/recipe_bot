@@ -15,7 +15,7 @@ type Order struct {
 	BinanceStatus    string
 	OriginalQuantity float64
 	Price            float64
-	NetChange        float64
+	ErrorMessage     string
 }
 
 func (o Order) UpdateStatus() string {
@@ -43,7 +43,7 @@ func CheckAllOpenOrders() string {
 
 	db := dbConn()
 
-	rows, err := db.Query("SELECT id, dish_id, symbol, binance_order_id, binance_status, original_quantity, price, coalesce(net_change, 0.0) FROM orders WHERE binance_status = ?", "OPEN")
+	rows, err := db.Query("SELECT id, dish_id, symbol, binance_order_id, binance_status, original_quantity, price, error_message FROM orders WHERE binance_status = ?", "OPEN")
 	if err != nil {
 		panic(err.Error())
 	}
@@ -53,12 +53,12 @@ func CheckAllOpenOrders() string {
 	orders := []Order{}
 
 	var (
-		id, dishID, binanceOrderID         int
-		symbol, binanceStatus              string
-		originalQuantity, price, netChange float64
+		id, dishID, binanceOrderID          int
+		symbol, binanceStatus, errorMessage string
+		originalQuantity, price             float64
 	)
 	for rows.Next() {
-		err := rows.Scan(&id, &dishID, &symbol, &binanceOrderID, &binanceStatus, &originalQuantity, &price, &netChange)
+		err := rows.Scan(&id, &dishID, &symbol, &binanceOrderID, &binanceStatus, &originalQuantity, &price, &errorMessage)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -69,7 +69,7 @@ func CheckAllOpenOrders() string {
 		order.BinanceStatus = binanceStatus
 		order.OriginalQuantity = originalQuantity
 		order.Price = price
-		order.NetChange = netChange
+		order.ErrorMessage = errorMessage
 
 		orders = append(orders, order)
 	}

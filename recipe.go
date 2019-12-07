@@ -17,6 +17,7 @@ type Recipe struct {
 	LossRatio float64
 	Quantity  float64
 	Frequency int
+	Active	bool
 }
 
 func (r Recipe) CookDish() string {

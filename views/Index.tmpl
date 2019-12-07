@@ -7,6 +7,7 @@
       <tr>
         <td>ID</td>
         <td>Name</td>
+        <td>Active</td>
         <td>View</td>
         <td>Edit</td>
         <td>Delete</td>
@@ -17,7 +18,8 @@
     {{ . }}
       <tr>
         <td>{{ .ID }}</td>
-        <td> {{ .Name }} </td>
+        <td>{{ .Name }}</td>
+        <td>{{ .Active }}</td>
         <td><a href="/show?id={{ .ID }}">View</a></td>
         <td><a href="/edit?id={{ .ID }}">Edit</a></td>
         <td><a href="/delete?id={{ .ID }}">Delete</a><td>

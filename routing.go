@@ -18,11 +18,15 @@ func Index(w http.ResponseWriter, r *http.Request) {
 	recipe := Recipe{}
 	recipes := []Recipe{}
 	for selDB.Next() {
-		var id int
-		var name, symbol, side string
-		var gainRatio, lossRatio, quantity float64
-		var frequency int
-		err = selDB.Scan(&id, &name, &symbol, &side, &gainRatio, &lossRatio, &quantity, &frequency)
+		var (
+			id                             int
+			name, symbol, side             string
+			gainRatio, lossRatio, quantity float64
+			frequency                      int
+			active                         bool
+		)
+
+		err = selDB.Scan(&id, &name, &symbol, &side, &gainRatio, &lossRatio, &quantity, &frequency, &active)
 		if err != nil {
 			panic(err.Error())
 		}
@@ -34,6 +38,7 @@ func Index(w http.ResponseWriter, r *http.Request) {
 		recipe.LossRatio = lossRatio
 		recipe.Quantity = quantity
 		recipe.Frequency = frequency
+		recipe.Active = active
 		recipes = append(recipes, recipe)
 	}
 	fmt.Println("Index Recipes:", recipes)
@@ -50,11 +55,14 @@ func Show(w http.ResponseWriter, r *http.Request) {
 	}
 	recipe := Recipe{}
 	for selDB.Next() {
-		var id int
-		var name, symbol, side string
-		var gainRatio, lossRatio, quantity float64
-		var frequency int
-		err = selDB.Scan(&id, &name, &symbol, &side, &gainRatio, &lossRatio, &quantity, &frequency)
+		var (
+			id                             int
+			name, symbol, side             string
+			gainRatio, lossRatio, quantity float64
+			frequency                      int
+			active                         bool
+		)
+		err = selDB.Scan(&id, &name, &symbol, &side, &gainRatio, &lossRatio, &quantity, &frequency, &active)
 		if err != nil {
 			panic(err.Error())
 		}
@@ -66,6 +74,7 @@ func Show(w http.ResponseWriter, r *http.Request) {
 		recipe.LossRatio = lossRatio
 		recipe.Quantity = quantity
 		recipe.Frequency = frequency
+		recipe.Active = active
 	}
 	tmpl.ExecuteTemplate(w, "Show", recipe)
 	defer db.Close()
@@ -84,11 +93,14 @@ func Edit(w http.ResponseWriter, r *http.Request) {
 	}
 	recipe := Recipe{}
 	for selDB.Next() {
-		var id int
-		var name, symbol, side string
-		var gainRatio, lossRatio, quantity float64
-		var frequency int
-		err = selDB.Scan(&id, &name, &symbol, &side, &gainRatio, &lossRatio, &quantity, &frequency)
+		var (
+			id                             int
+			name, symbol, side             string
+			gainRatio, lossRatio, quantity float64
+			frequency                      int
+			active                         bool
+		)
+		err = selDB.Scan(&id, &name, &symbol, &side, &gainRatio, &lossRatio, &quantity, &frequency, &active)
 		if err != nil {
 			panic(err.Error())
 		}
@@ -100,6 +112,7 @@ func Edit(w http.ResponseWriter, r *http.Request) {
 		recipe.LossRatio = lossRatio
 		recipe.Quantity = quantity
 		recipe.Frequency = frequency
+		recipe.Active = active
 	}
 	tmpl.ExecuteTemplate(w, "Edit", recipe)
 	defer db.Close()
@@ -115,11 +128,12 @@ func Insert(w http.ResponseWriter, r *http.Request) {
 		lossRatio := r.FormValue("LossRatio")
 		quantity := r.FormValue("Quantity")
 		frequency := r.FormValue("Frequency")
-		insForm, err := db.Prepare("INSERT INTO recipes(name, symbol, side, gain_ratio, loss_ratio, quantity, frequency) VALUES(?,?,?,?,?,?,?)")
+		active := r.FormValue("Active")
+		insForm, err := db.Prepare("INSERT INTO recipes(name, symbol, side, gain_ratio, loss_ratio, quantity, frequency, active) VALUES(?,?,?,?,?,?,?,?)")
 		if err != nil {
 			panic(err.Error())
 		}
-		insForm.Exec(name, symbol, side, gainRatio, lossRatio, quantity, frequency)
+		insForm.Exec(name, symbol, side, gainRatio, lossRatio, quantity, frequency, active)
 		log.Println("INSERT: name: " + name + " | Symbol: " + symbol + " | Side: " + side)
 	}
 	defer db.Close()
@@ -136,12 +150,13 @@ func Update(w http.ResponseWriter, r *http.Request) {
 		lossRatio := r.FormValue("LossRatio")
 		quantity := r.FormValue("Quantity")
 		frequency := r.FormValue("Frequency")
+		active := r.FormValue("Active")
 		id := r.FormValue("uid")
-		insForm, err := db.Prepare("UPDATE recipes SET name=?, symbol=?, side=?, gain_ratio=?, loss_ratio=?, quantity=?, frequency=? WHERE id=?")
+		insForm, err := db.Prepare("UPDATE recipes SET name=?, symbol=?, side=?, gain_ratio=?, loss_ratio=?, quantity=?, frequency=?, active=? WHERE id=?")
 		if err != nil {
 			panic(err.Error())
 		}
-		insForm.Exec(name, symbol, side, gainRatio, lossRatio, quantity, frequency, id)
+		insForm.Exec(name, symbol, side, gainRatio, lossRatio, quantity, frequency, active, id)
 		log.Println("UPDATE: name: " + name + " | Symbol: " + symbol + " | Side: " + side)
 	}
 	defer db.Close()
@@ -170,11 +185,14 @@ func Cook(w http.ResponseWriter, r *http.Request) {
 	}
 	recipe := Recipe{}
 	for selDB.Next() {
-		var id int
-		var name, symbol, side string
-		var gainRatio, lossRatio, quantity float64
-		var frequency int
-		err = selDB.Scan(&id, &name, &symbol, &side, &gainRatio, &lossRatio, &quantity, &frequency)
+		var (
+			id                             int
+			name, symbol, side             string
+			gainRatio, lossRatio, quantity float64
+			frequency                      int
+			active                         bool
+		)
+		err = selDB.Scan(&id, &name, &symbol, &side, &gainRatio, &lossRatio, &quantity, &frequency, &active)
 		if err != nil {
 			panic(err.Error())
 		}
@@ -186,6 +204,7 @@ func Cook(w http.ResponseWriter, r *http.Request) {
 		recipe.LossRatio = lossRatio
 		recipe.Quantity = quantity
 		recipe.Frequency = frequency
+		recipe.Active = active
 	}
 	recipe.CookDish()
 	tmpl.ExecuteTemplate(w, "Show", recipe)

@@ -3,7 +3,7 @@ CREATE TABLE IF NOT EXISTS recipes (
     name VARCHAR(255) NOT NULL,
     symbol VARCHAR(8),
     side VARCHAR(8),
-    gain_ratio DECIMAL(12,8) ,
+    gain_ratio DECIMAL(12,8),
     loss_ratio DECIMAL(12,8),
     quantity DECIMAL(12,8),
     frequency INT,
