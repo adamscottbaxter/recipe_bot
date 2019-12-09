@@ -65,6 +65,15 @@ func CreateOrder(dishID int64, symbol string, side binance.SideType, quantity st
 	return order
 }
 
+func CreateOrderTest(symbol string, side binance.SideType, quantity string, sellPrice string) error {
+	err := CreateClient().NewCreateOrderService().Symbol(symbol).
+		Side(side).Type(binance.OrderTypeLimit).
+		TimeInForce(binance.TimeInForceTypeGTC).Quantity(quantity).
+		Price(sellPrice).Test(context.Background())
+
+	return err
+}
+
 func CreateStopLossLimitOrder(dishID int64, symbol string, side binance.SideType, quantity string, sellPrice string, stopPrice string) *binance.CreateOrderResponse {
 	order, err := CreateClient().NewCreateOrderService().Symbol(symbol).
 		Side(side).Type(binance.OrderTypeStopLossLimit).
@@ -89,6 +98,15 @@ func CreateStopLossLimitOrder(dishID int64, symbol string, side binance.SideType
 	return order
 }
 
+func CreateStopLossLimitOrderTest(symbol string, side binance.SideType, quantity string, sellPrice string, stopPrice string) error {
+	err := CreateClient().NewCreateOrderService().Symbol(symbol).
+		Side(side).Type(binance.OrderTypeStopLossLimit).
+		TimeInForce(binance.TimeInForceTypeGTC).Quantity(quantity).
+		Price(sellPrice).StopPrice(stopPrice).Test(context.Background())
+
+	return err
+}
+
 func CreateTakeProfitLimitOrder(dishID int64, symbol string, side binance.SideType, quantity string, sellPrice string, stopPrice string) *binance.CreateOrderResponse {
 	order, err := CreateClient().NewCreateOrderService().Symbol(symbol).
 		Side(side).Type(binance.OrderTypeTakeProfitLimit).
@@ -111,6 +129,15 @@ func CreateTakeProfitLimitOrder(dishID int64, symbol string, side binance.SideTy
 	defer db.Close()
 	fmt.Printf("ORDER: \n %+v\n", order)
 	return order
+}
+
+func CreateTakeProfitLimitOrderTest(symbol string, side binance.SideType, quantity string, sellPrice string, stopPrice string) error {
+	err := CreateClient().NewCreateOrderService().Symbol(symbol).
+		Side(side).Type(binance.OrderTypeTakeProfitLimit).
+		TimeInForce(binance.TimeInForceTypeGTC).Quantity(quantity).
+		Price(sellPrice).StopPrice(stopPrice).Test(context.Background())
+
+	return err
 }
 
 func CancelOrder(symbol string, orderID int64) *binance.CancelOrderResponse {

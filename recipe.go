@@ -78,6 +78,19 @@ func (r Recipe) CookDish() string {
 	return "Dish Cooked"
 }
 
+func (r Recipe) CookDishTest() string {
+	if r.Side == "SELL" {
+		r.CreateSellOrdersTest()
+	} else {
+		r.CreateBuyOrdersTest()
+	}
+	// &{Symbol:BNBBTC OrderID:289673452 ClientOrderID:ywzi6PNQtfbeS5LeMFMUw2 TransactTime:1573336057195 Price:0.00225170 OrigQuantity:0.10000000 ExecutedQuantity:0.00000000 CummulativeQuoteQuantity:0.00000000 Status:NEW TimeInForce:GTC Type:LIMIT Side:SELL Fills:[]}
+
+	// &{Symbol:BNBBTC OrderID:289673453 ClientOrderID:Gy7KR6i6dN08euRbRXXHoE TransactTime:1573336057397 Price: OrigQuantity: ExecutedQuantity: CummulativeQuoteQuantity: Status: TimeInForce: Type: Side: Fills:[]}
+
+	return "Dish Cooked"
+}
+
 func (r Recipe) prepDish() int64 {
 	currentPrice := GetPrice(r.Symbol)
 
@@ -125,6 +138,23 @@ func (r Recipe) CreateSellOrders(dishID int64) [2]*binance.CreateOrderResponse {
 	return orders
 }
 
+func (r Recipe) CreateSellOrdersTest() []error {
+	currentPrice := GetPrice(r.Symbol)
+
+	highPrice := MultiplyPrice(currentPrice, r.GainRatio)
+	lowPrice := MultiplyPrice(currentPrice, r.LossRatio)
+	stopPrice := MultiplyPrice(lowPrice, 0.99)
+	highOrderError := CreateOrderTest(r.Symbol, r.binanceSide(), r.StringQty(), highPrice)
+	lowOrderError := CreateStopLossLimitOrderTest(r.Symbol, r.binanceSide(), r.StringQty(), lowPrice, stopPrice)
+
+	var orderErrors []error
+	orderErrors = append(orderErrors, highOrderError)
+	orderErrors = append(orderErrors, lowOrderError)
+
+	fmt.Println("Order errors: %v", &orderErrors)
+	return orderErrors
+}
+
 func (r Recipe) CreateBuyOrders(dishID int64) [2]*binance.CreateOrderResponse {
 	currentPrice := GetPrice(r.Symbol)
 
@@ -141,6 +171,24 @@ func (r Recipe) CreateBuyOrders(dishID int64) [2]*binance.CreateOrderResponse {
 
 	fmt.Println("Orders: %v", &orders)
 	return orders
+}
+
+func (r Recipe) CreateBuyOrdersTest() []error {
+	currentPrice := GetPrice(r.Symbol)
+
+	highPrice := MultiplyPrice(currentPrice, r.GainRatio)
+	lowPrice := MultiplyPrice(currentPrice, r.LossRatio)
+	stopPrice := MultiplyPrice(highPrice, 0.999)
+
+	lowOrderError := CreateOrderTest(r.Symbol, r.binanceSide(), r.StringQty(), lowPrice)
+	highOrderError := CreateTakeProfitLimitOrderTest(r.Symbol, r.binanceSide(), r.StringQty(), highPrice, stopPrice)
+
+	var orderErrors []error
+	orderErrors = append(orderErrors, highOrderError)
+	orderErrors = append(orderErrors, lowOrderError)
+
+	fmt.Println("Order errors: %v", &orderErrors)
+	return orderErrors
 }
 
 func (r Recipe) StringQty() string {

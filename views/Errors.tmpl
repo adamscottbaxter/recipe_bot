@@ -1,0 +1,11 @@
+{{ define "Errors" }}
+  {{ template "Header" }}
+    {{ template "Menu"  }}
+    <h2> Errors </h2>
+    <ul>
+    {{ range . }}
+    <li>{{ . }}</li>
+    {{ end }}
+    </ul>
+  {{ template "Footer" }}
+{{ end }}

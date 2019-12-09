@@ -211,6 +211,41 @@ func Cook(w http.ResponseWriter, r *http.Request) {
 	defer db.Close()
 }
 
+func TestCook(w http.ResponseWriter, r *http.Request) {
+	db := dbConn()
+	nId := r.URL.Query().Get("id")
+	selDB, err := db.Query("SELECT * FROM recipes WHERE id=?", nId)
+	if err != nil {
+		panic(err.Error())
+	}
+	recipe := Recipe{}
+	for selDB.Next() {
+		var (
+			id                             int
+			name, symbol, side             string
+			gainRatio, lossRatio, quantity float64
+			frequency                      int
+			active                         bool
+		)
+		err = selDB.Scan(&id, &name, &symbol, &side, &gainRatio, &lossRatio, &quantity, &frequency, &active)
+		if err != nil {
+			panic(err.Error())
+		}
+		recipe.ID = id
+		recipe.Name = name
+		recipe.Symbol = symbol
+		recipe.Side = side
+		recipe.GainRatio = gainRatio
+		recipe.LossRatio = lossRatio
+		recipe.Quantity = quantity
+		recipe.Frequency = frequency
+		recipe.Active = active
+	}
+	testErrors := recipe.CookDishTest()
+	tmpl.ExecuteTemplate(w, "Errors", testErrors)
+	defer db.Close()
+}
+
 func serveWeb() {
 	http.HandleFunc("/", Index)
 	http.HandleFunc("/show", Show)
@@ -220,5 +255,6 @@ func serveWeb() {
 	http.HandleFunc("/update", Update)
 	http.HandleFunc("/delete", Delete)
 	http.HandleFunc("/cook", Cook)
+	http.HandleFunc("/test_cook", TestCook)
 	http.ListenAndServe(":8080", nil)
 }
