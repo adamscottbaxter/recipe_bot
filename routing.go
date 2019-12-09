@@ -157,7 +157,7 @@ func Update(w http.ResponseWriter, r *http.Request) {
 			panic(err.Error())
 		}
 		insForm.Exec(name, symbol, side, gainRatio, lossRatio, quantity, frequency, active, id)
-		log.Println("UPDATE: name: " + name + " | Symbol: " + symbol + " | Side: " + side)
+		log.Println("UPDATE: name: " + name + " | Symbol: " + symbol + " | Side: " + side + "Quantity: " + quantity)
 	}
 	defer db.Close()
 	http.Redirect(w, r, "/", 301)

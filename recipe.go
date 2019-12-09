@@ -17,7 +17,51 @@ type Recipe struct {
 	LossRatio float64
 	Quantity  float64
 	Frequency int
-	Active	bool
+	Active    bool
+}
+
+func CookActiveRecipes() {
+	for _, r := range getActiveRecipes() {
+		r.CookDish()
+	}
+}
+
+func getActiveRecipes() []Recipe {
+	db := dbConn()
+	rows, err := db.Query("SELECT * FROM recipes where active = 1 ORDER BY id ASC")
+	if err != nil {
+		panic(err.Error())
+	}
+	defer db.Close()
+	recipe := Recipe{}
+	recipes := []Recipe{}
+	for rows.Next() {
+		var (
+			id                             int
+			name, symbol, side             string
+			gainRatio, lossRatio, quantity float64
+			frequency                      int
+			active                         bool
+		)
+
+		err = rows.Scan(&id, &name, &symbol, &side, &gainRatio, &lossRatio, &quantity, &frequency, &active)
+		if err != nil {
+			panic(err.Error())
+		}
+		recipe.ID = id
+		recipe.Name = name
+		recipe.Symbol = symbol
+		recipe.Side = side
+		recipe.GainRatio = gainRatio
+		recipe.LossRatio = lossRatio
+		recipe.Quantity = quantity
+		recipe.Frequency = frequency
+		recipe.Active = active
+		recipes = append(recipes, recipe)
+	}
+	fmt.Println("Recipes:", recipes)
+
+	return recipes
 }
 
 func (r Recipe) CookDish() string {
@@ -87,6 +131,7 @@ func (r Recipe) CreateBuyOrders(dishID int64) [2]*binance.CreateOrderResponse {
 	highPrice := MultiplyPrice(currentPrice, r.GainRatio)
 	lowPrice := MultiplyPrice(currentPrice, r.LossRatio)
 	stopPrice := MultiplyPrice(highPrice, 0.999)
+	// see what high price and stop price are relative to current price
 	lowOrder := CreateOrder(dishID, r.Symbol, r.binanceSide(), r.StringQty(), lowPrice)
 	highOrder := CreateTakeProfitLimitOrder(dishID, r.Symbol, r.binanceSide(), r.StringQty(), highPrice, stopPrice)
 
