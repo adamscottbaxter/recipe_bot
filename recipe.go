@@ -160,7 +160,7 @@ func (r Recipe) CreateBuyOrders(dishID int64) [2]*binance.CreateOrderResponse {
 
 	highPrice := MultiplyPrice(currentPrice, r.GainRatio)
 	lowPrice := MultiplyPrice(currentPrice, r.LossRatio)
-	stopPrice := MultiplyPrice(highPrice, 0.999)
+	stopPrice := MultiplyPrice(highPrice, 0.99)
 	// see what high price and stop price are relative to current price
 	lowOrder := CreateOrder(dishID, r.Symbol, r.binanceSide(), r.StringQty(), lowPrice)
 	highOrder := CreateTakeProfitLimitOrder(dishID, r.Symbol, r.binanceSide(), r.StringQty(), highPrice, stopPrice)
