@@ -121,21 +121,21 @@ func (r Recipe) binanceSide() binance.SideType {
 	}
 }
 
-func (r Recipe) CreateSellOrders(dishID int64) [2]*binance.CreateOrderResponse {
+func (r Recipe) CreateSellOrders(dishID int64) {
 	currentPrice := GetPrice(r.Symbol)
 
 	highPrice := MultiplyPrice(currentPrice, r.GainRatio)
 	lowPrice := MultiplyPrice(currentPrice, r.LossRatio)
 	stopPrice := MultiplyPrice(lowPrice, 0.99)
-	highOrder := CreateOrder(dishID, r.Symbol, r.binanceSide(), r.StringQty(), highPrice)
-	lowOrder := CreateStopLossLimitOrder(dishID, r.Symbol, r.binanceSide(), r.StringQty(), lowPrice, stopPrice)
+	CreateOrder(dishID, r.Symbol, r.binanceSide(), r.StringQty(), highPrice)
+	CreateStopLossLimitOrder(dishID, r.Symbol, r.binanceSide(), r.StringQty(), lowPrice, stopPrice)
 
-	var orders [2]*binance.CreateOrderResponse
-	orders[0] = highOrder
-	orders[1] = lowOrder
+	// var orders [2]*binance.CreateOrderResponse
+	// orders[0] = highOrder
+	// orders[1] = lowOrder
 
-	fmt.Println("Orders: %v", &orders)
-	return orders
+	// fmt.Println("Orders: %v", &orders)
+	// return orders
 }
 
 func (r Recipe) CreateSellOrdersTest() []error {
@@ -155,22 +155,22 @@ func (r Recipe) CreateSellOrdersTest() []error {
 	return orderErrors
 }
 
-func (r Recipe) CreateBuyOrders(dishID int64) [2]*binance.CreateOrderResponse {
+func (r Recipe) CreateBuyOrders(dishID int64) {
 	currentPrice := GetPrice(r.Symbol)
 
 	highPrice := MultiplyPrice(currentPrice, r.GainRatio)
 	lowPrice := MultiplyPrice(currentPrice, r.LossRatio)
 	stopPrice := MultiplyPrice(highPrice, 0.99)
 	// see what high price and stop price are relative to current price
-	lowOrder := CreateOrder(dishID, r.Symbol, r.binanceSide(), r.StringQty(), lowPrice)
-	highOrder := CreateTakeProfitLimitOrder(dishID, r.Symbol, r.binanceSide(), r.StringQty(), highPrice, stopPrice)
+	CreateOrder(dishID, r.Symbol, r.binanceSide(), r.StringQty(), lowPrice)
+	CreateTakeProfitLimitOrder(dishID, r.Symbol, r.binanceSide(), r.StringQty(), highPrice, stopPrice)
 
-	var orders [2]*binance.CreateOrderResponse
-	orders[0] = highOrder
-	orders[1] = lowOrder
+	// var orders [2]*binance.CreateOrderResponse
+	// orders[0] = highOrder
+	// orders[1] = lowOrder
 
-	fmt.Println("Orders: %v", &orders)
-	return orders
+	// fmt.Println("Orders: %v", &orders)
+	// return orders
 }
 
 func (r Recipe) CreateBuyOrdersTest() []error {
