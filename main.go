@@ -20,7 +20,8 @@ func dbConn() (db *sql.DB) {
 
 func main() {
 	// serveWeb()
-	CookActiveRecipes()
+	AllDishes()
+	// CookActiveRecipes()
 	// CheckAllOpenOrders()
 	// db := dbConn()
 	// nId := 8

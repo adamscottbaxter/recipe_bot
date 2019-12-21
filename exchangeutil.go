@@ -206,6 +206,8 @@ func CheckOrder(symbol string, orderID int64) *binance.Order {
 	return order
 }
 
+
+
 // https://www.binance.com/api/v1/exchangeInfo
 // {
 //   "symbol": "BNBBTC",
