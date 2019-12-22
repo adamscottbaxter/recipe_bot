@@ -19,8 +19,8 @@ func dbConn() (db *sql.DB) {
 }
 
 func main() {
-	// serveWeb()
-	AllDishes()
+	serveWeb()
+	// AllDishes()
 	// CookActiveRecipes()
 	// CheckAllOpenOrders()
 	// db := dbConn()

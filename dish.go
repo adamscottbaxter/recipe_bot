@@ -14,7 +14,7 @@ type Dish struct {
 
 func AllDishes() []Dish {
 	db := dbConn()
-	selDB, err := db.Query("SELECT id, recipe_id, symbol, side, COALESCE(quantity, 0), COALESCE(current_price, 0), COALESCE(fill_price, 0), COALESCE(net_change, 0) FROM dishes ORDER BY id ASC")
+	selDB, err := db.Query("SELECT id, recipe_id, symbol, side, COALESCE(current_price, 0), COALESCE(fill_price, 0), COALESCE(net_change, 0) FROM dishes ORDER BY id ASC")
 	if err != nil {
 		panic(err.Error())
 	}
@@ -22,12 +22,12 @@ func AllDishes() []Dish {
 	dishes := []Dish{}
 	for selDB.Next() {
 		var (
-			id, recipeID                                 int
-			symbol, side                                 string
-			quantity, currentPrice, fillPrice, netChange float64
+			id, recipeID                       int
+			symbol, side                       string
+			currentPrice, fillPrice, netChange float64
 		)
 
-		err = selDB.Scan(&id, &recipeID, &symbol, &side, &quantity, &currentPrice, &fillPrice, &netChange)
+		err = selDB.Scan(&id, &recipeID, &symbol, &side, &currentPrice, &fillPrice, &netChange)
 		if err != nil {
 			panic(err.Error())
 		}

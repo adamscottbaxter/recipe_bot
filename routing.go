@@ -246,6 +246,11 @@ func TestCook(w http.ResponseWriter, r *http.Request) {
 	defer db.Close()
 }
 
+func ShowAllDishes(w http.ResponseWriter, r *http.Request) {
+	dishes := AllDishes()
+	tmpl.ExecuteTemplate(w, "ShowAllDishes", dishes)
+}
+
 func serveWeb() {
 	http.HandleFunc("/", Index)
 	http.HandleFunc("/show", Show)
@@ -256,5 +261,6 @@ func serveWeb() {
 	http.HandleFunc("/delete", Delete)
 	http.HandleFunc("/cook", Cook)
 	http.HandleFunc("/test_cook", TestCook)
+	http.HandleFunc("/show_all_dishes", ShowAllDishes)
 	http.ListenAndServe(":8080", nil)
 }

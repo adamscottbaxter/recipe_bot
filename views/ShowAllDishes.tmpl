@@ -1,0 +1,32 @@
+{{ define "ShowAllDishes" }}
+  {{ template "Header" }}
+    {{ template "Menu"  }}
+    <h2>All Dishes</h2>
+    <table border="1">
+      <thead>
+      <tr>
+        <td>ID</td>
+        <td>Recipe ID</td>
+        <td>Symbol</td>
+        <td>Side</td>
+        <td>Current Price</td>
+        <td>Fill Price</td>
+        <td>Net Change</td>
+      </tr>
+       </thead>
+       <tbody>
+    {{ range . }}
+      <tr>
+        <td>{{ .ID }}</td>
+        <td>{{ .RecipeID }}</td>
+        <td>{{ .Symbol }}</td>
+        <td>{{ .Side }}</td>
+        <td>{{ .CurrentPrice }}</td>
+        <td>{{ .FillPrice }}</td>
+        <td>{{ .NetChange }}</td>
+      </tr>
+    {{ end }}
+       </tbody>
+    </table>
+  {{ template "Footer" }}
+{{ end }}
