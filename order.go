@@ -7,6 +7,7 @@ import (
 	binance "github.com/adshao/go-binance"
 )
 
+// Order type
 type Order struct {
 	ID               int
 	DishID           int
@@ -18,6 +19,7 @@ type Order struct {
 	ErrorMessage     string
 }
 
+// UpdateStatus update the status of an order
 func (o Order) UpdateStatus() string {
 	fmt.Printf("ORDER update: \n %+v\n", o)
 	binanceOrder := CheckOrder(o.Symbol, int64(o.BinanceOrderID))
@@ -34,11 +36,12 @@ func (o Order) setStatus(status binance.OrderStatusType) Order {
 		panic(err.Error())
 	}
 	prep.Exec(status, o.ID)
-	fmt.Println("UPDATE ORDER: status: %v | ID: %v", status, o.ID)
+	fmt.Printf("UPDATE ORDER: status: %v | ID: %v", status, o.ID)
 	defer db.Close()
 	return o
 }
 
+// CheckAllOpenOrders updates the status of all open orders
 func CheckAllOpenOrders() string {
 
 	db := dbConn()

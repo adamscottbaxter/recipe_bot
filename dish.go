@@ -2,6 +2,7 @@ package main
 
 import "fmt"
 
+// Dish create dish
 type Dish struct {
 	ID           int
 	RecipeID     int
@@ -12,6 +13,7 @@ type Dish struct {
 	NetChange    float64
 }
 
+// AllDishes returns a slice of all Dishes
 func AllDishes() []Dish {
 	db := dbConn()
 	selDB, err := db.Query("SELECT id, recipe_id, symbol, side, COALESCE(current_price, 0), COALESCE(fill_price, 0), COALESCE(net_change, 0) FROM dishes ORDER BY id ASC")
@@ -41,10 +43,11 @@ func AllDishes() []Dish {
 		dishes = append(dishes, dish)
 	}
 	defer db.Close()
-	fmt.Print("Dishes: %v", dishes)
+	fmt.Printf("Dishes: %v", dishes)
 	return dishes
 }
 
+// Orders returns the orders associated with a dish
 func (d Dish) Orders() []Order {
 	db := dbConn()
 	selDB, err := db.Query("SELECT * FROM orders where dish_id = ?", d.ID)
@@ -75,6 +78,6 @@ func (d Dish) Orders() []Order {
 		orders = append(orders, order)
 	}
 	defer db.Close()
-	fmt.Print("Dish: %v ---- Orders: %v", d, orders)
+	fmt.Printf("Dish: %v ---- Orders: %v", d, orders)
 	return orders
 }
