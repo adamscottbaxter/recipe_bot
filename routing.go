@@ -251,6 +251,11 @@ func ShowAllDishes(w http.ResponseWriter, r *http.Request) {
 	tmpl.ExecuteTemplate(w, "ShowAllDishes", dishes)
 }
 
+func ShowAllOrders(w http.ResponseWriter, r *http.Request) {
+	orders := GetAllOrders()
+	tmpl.ExecuteTemplate(w, "ShowAllOrders", orders)
+}
+
 func serveWeb() {
 	http.HandleFunc("/", Index)
 	http.HandleFunc("/show", Show)
@@ -262,5 +267,6 @@ func serveWeb() {
 	http.HandleFunc("/cook", Cook)
 	http.HandleFunc("/test_cook", TestCook)
 	http.HandleFunc("/show_all_dishes", ShowAllDishes)
+	http.HandleFunc("/show_all_orders", ShowAllOrders)
 	http.ListenAndServe(":8080", nil)
 }

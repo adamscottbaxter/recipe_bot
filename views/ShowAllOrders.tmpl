@@ -1,0 +1,34 @@
+{{ define "ShowAllOrders" }}
+  {{ template "Header" }}
+    {{ template "Menu"  }}
+    <h2>All Orders</h2>
+    <table border="1">
+      <thead>
+      <tr>
+        <td>ID</td>
+        <td>Dish ID</td>
+        <td>Symbol</td>
+        <td>Binance Order ID</td>
+        <td>Binance Status</td>
+        <td>Original Quantity</td>
+        <td>Price</td>
+        <td>Error Message</td>
+      </tr>
+       </thead>
+       <tbody>
+    {{ range . }}
+      <tr>
+        <td>{{ .ID }}</td>
+        <td>{{ .DishID }}</td>
+        <td>{{ .Symbol }}</td>
+        <td>{{ .BinanceOrderID }}</td>
+        <td>{{ .BinanceStatus }}</td>
+        <td>{{ .OriginalQuantity }}</td>
+        <td>{{ .Price }}</td>
+        <td>{{ .ErrorMessage }}</td>
+      </tr>
+    {{ end }}
+       </tbody>
+    </table>
+  {{ template "Footer" }}
+{{ end }}
