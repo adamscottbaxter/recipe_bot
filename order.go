@@ -41,11 +41,11 @@ func (o Order) setStatus(status binance.OrderStatusType) Order {
 	return o
 }
 
-// GetAllOrders gets all Orders from db
+// GetAllOrders gets all Orders without errors from db
 func GetAllOrders() []Order {
 	db := dbConn()
 
-	rows, err := db.Query("SELECT id, dish_id, COALESCE(symbol, ''), COALESCE(binance_order_id, 0), COALESCE(binance_status, ''), COALESCE(original_quantity, 0), COALESCE(price, 0), COALESCE(error_message, '') FROM orders")
+	rows, err := db.Query("SELECT id, dish_id, COALESCE(symbol, ''), COALESCE(binance_order_id, 0), COALESCE(binance_status, ''), COALESCE(original_quantity, 0), COALESCE(price, 0), COALESCE(error_message, '') FROM orders where error_message IS NULL")
 	if err != nil {
 		panic(err.Error())
 	}
@@ -84,7 +84,9 @@ func CheckAllOpenOrders() string {
 	orders := GetAllOrders()
 
 	for _, order := range orders {
-		order.UpdateStatus()
+		if order.BinanceStatus == "NEW" {
+			order.UpdateStatus()
+		}
 	}
 
 	return "TBD ALL OPEN ORDERS"

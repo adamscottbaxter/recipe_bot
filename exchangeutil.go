@@ -200,13 +200,12 @@ func CheckOrder(symbol string, orderID int64) *binance.Order {
 	order, err := CreateClient().NewGetOrderService().Symbol(symbol).
 		OrderID(orderID).Do(context.Background())
 	if err != nil {
+		fmt.Printf("ERROR- symbol: %v -- orderID: %v", symbol, orderID)
 		panic(err)
 	}
 	fmt.Printf("ORDER CHECK: \n %+v\n", order)
 	return order
 }
-
-
 
 // https://www.binance.com/api/v1/exchangeInfo
 // {
