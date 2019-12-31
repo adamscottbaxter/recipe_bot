@@ -41,11 +41,49 @@ func (o Order) setStatus(status binance.OrderStatusType) Order {
 	return o
 }
 
-// GetAllOrders gets all Orders without errors from db
-func GetAllOrders() []Order {
+// GetAllValidOrders gets all Orders without errors from db
+func GetAllValidOrders() []Order {
 	db := dbConn()
 
 	rows, err := db.Query("SELECT id, dish_id, COALESCE(symbol, ''), COALESCE(binance_order_id, 0), COALESCE(binance_status, ''), COALESCE(original_quantity, 0), COALESCE(price, 0), COALESCE(error_message, '') FROM orders where error_message IS NULL")
+	if err != nil {
+		panic(err.Error())
+	}
+	defer db.Close()
+
+	order := Order{}
+	orders := []Order{}
+
+	var (
+		id, dishID, binanceOrderID          int
+		symbol, binanceStatus, errorMessage string
+		originalQuantity, price             float64
+	)
+	for rows.Next() {
+		err := rows.Scan(&id, &dishID, &symbol, &binanceOrderID, &binanceStatus, &originalQuantity, &price, &errorMessage)
+		if err != nil {
+			log.Fatal(err)
+		}
+		order.ID = id
+		order.DishID = dishID
+		order.Symbol = symbol
+		order.BinanceOrderID = binanceOrderID
+		order.BinanceStatus = binanceStatus
+		order.OriginalQuantity = originalQuantity
+		order.Price = price
+		order.ErrorMessage = errorMessage
+
+		orders = append(orders, order)
+	}
+	fmt.Printf("GetAllValidOrders: %v", orders)
+	return orders
+}
+
+// GetAllOrders gets all Orders from db
+func GetAllOrders() []Order {
+	db := dbConn()
+
+	rows, err := db.Query("SELECT id, dish_id, COALESCE(symbol, ''), COALESCE(binance_order_id, 0), COALESCE(binance_status, ''), COALESCE(original_quantity, 0), COALESCE(price, 0), COALESCE(error_message, '') FROM orders")
 	if err != nil {
 		panic(err.Error())
 	}
@@ -81,7 +119,7 @@ func GetAllOrders() []Order {
 
 // CheckAllOpenOrders updates the status of all open orders
 func CheckAllOpenOrders() string {
-	orders := GetAllOrders()
+	orders := GetAllValidOrders()
 
 	for _, order := range orders {
 		if order.BinanceStatus == "NEW" {

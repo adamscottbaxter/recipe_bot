@@ -1,6 +1,10 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"log"
+	"math"
+)
 
 // Dish create dish
 type Dish struct {
@@ -45,6 +49,56 @@ func AllDishes() []Dish {
 	defer db.Close()
 	fmt.Printf("Dishes: %v", dishes)
 	return dishes
+}
+
+// UpdateDishes updates the fill price and net change of dishes with filled orders.
+func UpdateDishes() {
+	dishes := AllDishes()
+	for _, d := range dishes {
+		d.updateFromOrders()
+	}
+}
+
+// updateFromOrders sets the fill price and net change
+// based on order attributes
+func (d Dish) updateFromOrders() {
+	if d.FillPrice != 0 {
+		orders := d.Orders()
+		firstOrder := orders[0]
+		lastOrder := orders[len(orders)-1]
+
+		if firstOrder.ErrorMessage == "" && lastOrder.ErrorMessage == "" {
+			if firstOrder.BinanceStatus == "FILLED" || lastOrder.BinanceStatus == "FILLED" {
+				var fill, net float64
+				if firstOrder.BinanceStatus == "FILLED" && lastOrder.BinanceStatus == "FILLED" {
+					fill = math.Abs(firstOrder.Price - lastOrder.Price)
+					net = fill * firstOrder.OriginalQuantity
+				} else if firstOrder.BinanceStatus == "FILLED" {
+					fill = firstOrder.Price
+					net = (firstOrder.Price - d.CurrentPrice) * firstOrder.OriginalQuantity
+				} else {
+					fill = lastOrder.Price
+					net = (lastOrder.Price - d.CurrentPrice) * firstOrder.OriginalQuantity
+				}
+				d.SetFillPriceAndNetChange(fill, net)
+			}
+
+		}
+	}
+
+}
+
+//SetFillPriceAndNetChange update db with fill price and net change
+func (d Dish) SetFillPriceAndNetChange(fillPrice float64, netChange float64) {
+	db := dbConn()
+	dbPrep, err := db.Prepare("UPDATE dishes SET fill_price=?, net_change=? WHERE id=?")
+	if err != nil {
+		panic(err.Error())
+	}
+	dbPrep.Exec(fillPrice, netChange, d.ID)
+	log.Printf("UPDATE Dish: ID: %v | Fill Price: %v | Net Change: %v", d.ID, fillPrice, netChange)
+
+	defer db.Close()
 }
 
 // Orders returns the orders associated with a dish
