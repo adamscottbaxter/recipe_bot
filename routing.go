@@ -5,6 +5,7 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"os"
 )
 
 var tmpl = template.Must(template.ParseGlob("views/*"))
@@ -268,5 +269,5 @@ func serveWeb() {
 	http.HandleFunc("/test_cook", TestCook)
 	http.HandleFunc("/show_all_dishes", ShowAllDishes)
 	http.HandleFunc("/show_all_orders", ShowAllOrders)
-	http.ListenAndServe(":8080", nil)
+	http.ListenAndServe(":"+os.Getenv("PORT"), nil)
 }
