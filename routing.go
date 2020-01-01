@@ -270,5 +270,6 @@ func serveWeb() {
 	http.HandleFunc("/test_cook", TestCook)
 	http.HandleFunc("/show_all_dishes", ShowAllDishes)
 	http.HandleFunc("/show_all_orders", ShowAllOrders)
+	http.HandleFunc("/favicon.ico", "")
 	http.ListenAndServe(":"+os.Getenv("PORT"), nil)
 }
