@@ -18,6 +18,7 @@ func dbConn() (db *sql.DB) {
 		fmt.Println("ERROR Connecting to DB")
 		panic(err.Error())
 	}
+	fmt.Println("DB Success")
 	return db
 }
 
