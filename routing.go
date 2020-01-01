@@ -14,6 +14,7 @@ func Index(w http.ResponseWriter, r *http.Request) {
 	db := dbConn()
 	selDB, err := db.Query("SELECT * FROM recipes ORDER BY id ASC")
 	if err != nil {
+		fmt.Printf("Error in Index() => %v", err)
 		panic(err.Error())
 	}
 	recipe := Recipe{}
