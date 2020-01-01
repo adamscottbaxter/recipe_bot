@@ -258,6 +258,9 @@ func ShowAllOrders(w http.ResponseWriter, r *http.Request) {
 	tmpl.ExecuteTemplate(w, "ShowAllOrders", orders)
 }
 
+func Favicon(w http.ResponseWriter, r *http.Request) {
+}
+
 func serveWeb() {
 	http.HandleFunc("/", Index)
 	http.HandleFunc("/show", Show)
@@ -270,6 +273,6 @@ func serveWeb() {
 	http.HandleFunc("/test_cook", TestCook)
 	http.HandleFunc("/show_all_dishes", ShowAllDishes)
 	http.HandleFunc("/show_all_orders", ShowAllOrders)
-	http.HandleFunc("/favicon.ico", "")
+	http.HandleFunc("/favicon.ico", Favicon)
 	http.ListenAndServe(":"+os.Getenv("PORT"), nil)
 }
