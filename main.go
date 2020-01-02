@@ -27,8 +27,11 @@ func dbConn() (db *sql.DB) {
 func main() {
 	// serveWeb()
 	symbolLevels := map[string]string{
-		"BTCUSDT": "5",
-		"ETHUSDT": "5",
+		// "BTCUSDT": "5",
+		// "ETHUSDT": "5",
+		"ETHBTC": "5",
+		"BNBBTC": "5",
+		"BNBETH": "5",
 	}
 
 	// wsDepthHandler := func(event *binance.WsDepthEvent) {
@@ -39,7 +42,10 @@ func main() {
 	}
 
 	wsPartial := func(event *binance.WsPartialDepthEvent) {
-		fmt.Println(event)
+		fmt.Println(event.Symbol)
+		fmt.Println("Bids: ", event.Bids)
+		fmt.Println("Asks: ", event.Asks)
+		fmt.Println("----------------------")
 	}
 
 	// var wsPartialDepthEvt binance.WsPartialDepthEvent
@@ -53,7 +59,7 @@ func main() {
 	}
 	// use stopC to exit
 	go func() {
-		time.Sleep(3 * time.Second)
+		time.Sleep(1 * time.Second)
 		stopC <- struct{}{}
 	}()
 	// remove this if you do not want to be blocked here
