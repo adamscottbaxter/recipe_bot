@@ -15,17 +15,22 @@ func dbConn() (db *sql.DB) {
 	dbUser := os.Getenv("DBUSER")
 	dbPass := os.Getenv("DBPASS")
 	dbname := os.Getenv("DBNAME")
-	db, err := sql.Open(dbDriver, dbUser+":"+dbPass+"@/"+dbname)
+	dbHost := os.Getenv("DBHOST")
+	dbPort := os.Getenv("DBPORT")
+	db, err := sql.Open(dbDriver, dbUser+":"+dbPass+"@tcp("+dbHost+":"+dbPort+")/"+dbname)
 	if err != nil {
-		fmt.Println("ERROR Connecting to DB")
+		fmt.Println("ERROR setting up DB")
 		panic(err.Error())
 	}
-	fmt.Println("DB Success")
 	return db
 }
 
 func main() {
-	// serveWeb()
+	serveWeb()
+}
+
+// CombinedDepth saved for later
+func CombinedDepth() {
 	symbolLevels := map[string]string{
 		// "BTCUSDT": "5",
 		// "ETHUSDT": "5",
