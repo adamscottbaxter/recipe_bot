@@ -83,24 +83,6 @@ func CreateOrder(dishID int64, symbol string, side binance.SideType, quantity st
 	} else {
 		InsertValidOrder(dishID, symbol, order.OrderID, order.Status, order.OrigQuantity, order.Price)
 	}
-	// fmt.Printf("ORDER: \n %+v\n error- %v", order, binanceErr)
-	// db := dbConn()
-	// stmt, err := db.Prepare("INSERT INTO orders(dish_id, symbol) VALUES(?,?)")
-	// if err != nil {
-	// 	log.Fatal("Cannot prepare DB statement", err)
-	// }
-	// fmt.Print("Created Limit Order")
-
-	// &{Symbol:BNBBTC OrderID:289673452 ClientOrderID:ywzi6PNQtfbeS5LeMFMUw2 TransactTime:1573336057195 Price:0.00225170 OrigQuantity:0.10000000 ExecutedQuantity:0.00000000 CummulativeQuoteQuantity:0.00000000 Status:NEW TimeInForce:GTC Type:LIMIT Side:SELL Fills:[]}
-	// _, err = stmt.Exec(dishID, order.Symbol, order.OrderID, order.Status, order.OrigQuantity, order.Price, binanceErr)
-	// // stmt.Exec(dishID, order.Symbol, order.OrderID, order.Status, order.OrigQuantity, order.Price, binanceErr)
-	// if err != nil {
-	// 	panic(err)
-	// 	log.Fatal("Cannot run insert statement", err)
-	// 	return order
-	// }
-	// defer db.Close()
-
 }
 
 func CreateOrderTest(symbol string, side binance.SideType, quantity string, sellPrice string) error {
@@ -124,24 +106,6 @@ func CreateStopLossLimitOrder(dishID int64, symbol string, side binance.SideType
 	} else {
 		InsertValidOrder(dishID, symbol, order.OrderID, order.Status, order.OrigQuantity, order.Price)
 	}
-
-	// if err != nil {
-	// 	panic(err)
-	// }
-	// db := dbConn()
-	// stmt, err := db.Prepare("INSERT INTO orders(dish_id, symbol, binance_order_id, binance_status, original_quantity, price) VALUES(?,?,?,?,?,?)")
-	// if err != nil {
-	// 	log.Fatal("Cannot prepare DB statement", err)
-	// }
-	// fmt.Print("Created Stop Loss Order")
-	// // &{Symbol:BNBBTC OrderID:289673453 ClientOrderID:Gy7KR6i6dN08euRbRXXHoE TransactTime:1573336057397 Price: OrigQuantity: ExecutedQuantity: CummulativeQuoteQuantity: Status: TimeInForce: Type: Side: Fills:[]}
-	// stmt.Exec(dishID, order.Symbol, order.OrderID, order.Status, order.OrigQuantity, order.Price)
-	// if err != nil {
-	// 	log.Fatal("Cannot run insert statement", err)
-	// }
-	// defer db.Close()
-	// fmt.Printf("ORDER: \n %+v\n", order)
-	// return order
 }
 
 func CreateStopLossLimitOrderTest(symbol string, side binance.SideType, quantity string, sellPrice string, stopPrice string) error {
